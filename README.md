@@ -28,6 +28,10 @@ async function main() {
   console.log('The NFT URI is: ', tokenURI);
   const meta = await metaParser.getMetaByURI(tokenURI);
   console.log('NFT meta is: ', meta);
+
+  // use the third parameter to control get 1155 uri
+  const tokenURI1155 = await metaParser.getTokenURI(contractAddress, tokenId, true);
+  console.log('The 1155 NFT URI is: ', tokenURI1155);
 }
 
 main();
