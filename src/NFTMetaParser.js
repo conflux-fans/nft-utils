@@ -1,7 +1,10 @@
-const NFT721_ABI = require('./abis/721.json');
 const axios = require('axios').default;
 const atobOfNode = require('atob');
 const decodeBase64 = (typeof window !== 'undefined') ? window.atob : atobOfNode;
+const {
+  NFT721_ABI,
+  ERC1155_ABI
+} = require('./abis');
 
 /**
  * @param {object} conflux - Pass a js-conflux-sdk Conflux instance
@@ -17,13 +20,22 @@ class NFTMetaParser {
     this.ipfsGateway = ipfsGateway;
   }
 
-  async getTokenURI(address, tokenId) {
-    const _contract = this.conflux.Contract({
-      address,
-      abi: NFT721_ABI
-    });
-    const _tokenURI = await _contract.tokenURI(tokenId);
-    return _tokenURI;
+  async getTokenURI(address, tokenId, is1155 = false) {
+    if (!is1155) {
+      const _contract = this.conflux.Contract({
+        address,
+        abi: NFT721_ABI
+      });
+      const _tokenURI = await _contract.tokenURI(tokenId);
+      return _tokenURI;
+    } else {
+      const _contract = this.conflux.Contract({
+        address,
+        abi: ERC1155_ABI
+      });
+      const _tokenURI = await _contract.uri(tokenId);
+      return _tokenURI.replace('{id}', paddingId(tokenId));
+    }
   }
 
   async getMetaByURI(rawURI) {
@@ -82,6 +94,9 @@ class NFTMetaParser {
   }
 }
 
-
+function paddingId(tokenId) {
+  tokenId = Number(tokenId).toString(16);
+  return tokenId.padStart(64, '0');
+}
 
 module.exports = NFTMetaParser;

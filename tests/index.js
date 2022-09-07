@@ -19,6 +19,10 @@ const checker = new NFTMetaParser(conflux, 'https://ipfs.io');
   /* let uri = await checker.getTokenURI('cfx:aceyccebnjp4mty68xbabavd38v39bynxp0npgw198', 2);
   console.log(uri); */
 
+  // 1155
+  let uri = await checker.getTokenURI('cfx:ace6p6egsuxv5hf61j332fayut6bxr3c7yv475a8cn', 11592235624451, true);
+  console.log(uri);
+
   /* let meta = {
     Name: "McD Memory #2",
     Description: "Mcd and cocafe",
@@ -33,7 +37,7 @@ const checker = new NFTMetaParser(conflux, 'https://ipfs.io');
   };
   console.log(checker.normalizeMeta(meta)); */
 
-  decodeData();
+  // decodeData();
 })();
 
 function decodeData() {

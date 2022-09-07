@@ -1,8 +1,8 @@
 {
   "name": "@confluxfans/nft-utils",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Some NFT utilities",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,9 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "atob": "^2.1.2",
-    "axios": "^0.23.0"
-  },
-  "devDependencies": {
-    "js-conflux-sdk": "^1.7.0"
+    "axios": "^0.23.0",
+    "js-conflux-sdk": "^2.1.6"
   }
 }
