@@ -1,6 +1,5 @@
 const axios = require('axios').default;
-const atobOfNode = require('atob');
-const decodeBase64 = (typeof window !== 'undefined') ? window.atob : atobOfNode;
+const decodeBase64 = (typeof window !== 'undefined') ? window.atob : base64Decode;
 const {
   NFT721_ABI,
   ERC1155_ABI
@@ -38,25 +37,33 @@ class NFTMetaParser {
     }
   }
 
-  async getMetaByURI(rawURI) {
+  async getMetaByURI(rawURI, axiosConfig = {timeout: 30000}) {
     let meta = {};
     try {
+      if (typeof rawURI.startsWith("{")) {
+        try {
+          meta = JSON.parse(rawURI);
+          return meta;
+        } catch (e) {
+          
+        }
+      }
+
       // get meta throught ipfs gateway
       if (rawURI.startsWith("ipfs")) {
         rawURI = this._ipfsGatewayURI(rawURI);
       }
 
       if (rawURI.startsWith("http")) {
-        const rawMeta = await axios.get(rawURI);
+        const rawMeta = await axios.get(rawURI, axiosConfig);
         meta = typeof rawMeta.data === 'object' ? rawMeta.data : JSON.parse(rawMeta.data);
       }
-  
+
       if (rawURI.match('base64')) {
         meta = this._decodeBase64(rawURI);
       }
     } catch(e) {
-      console.log("Meta data get failed: ");
-      console.error(e);
+      // console.log("Meta data get failed: ", e);
       throw e;
     }
     // normalize and return
@@ -97,6 +104,10 @@ class NFTMetaParser {
 function paddingId(tokenId) {
   tokenId = Number(tokenId).toString(16);
   return tokenId.padStart(64, '0');
+}
+
+function base64Decode(base64encoded) {
+  return Buffer.from(base64encoded, 'base64').toString('utf8');
 }
 
 module.exports = NFTMetaParser;
