@@ -26,7 +26,7 @@ class NFTMetaParser {
         abi: NFT721_ABI
       });
       const _tokenURI = await _contract.tokenURI(tokenId);
-      return _tokenURI;
+      return _tokenURI.replace('{id}', paddingId(tokenId));
     } else {
       const _contract = this.conflux.Contract({
         address,
