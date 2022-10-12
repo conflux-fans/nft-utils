@@ -20,20 +20,30 @@ class NFTMetaParser {
   }
 
   async getTokenURI(address, tokenId, is1155 = false) {
-    if (!is1155) {
-      const _contract = this.conflux.Contract({
-        address,
-        abi: NFT721_ABI
-      });
-      const _tokenURI = await _contract.tokenURI(tokenId);
-      return _tokenURI.replace('{id}', paddingId(tokenId));
-    } else {
-      const _contract = this.conflux.Contract({
-        address,
-        abi: ERC1155_ABI
-      });
-      const _tokenURI = await _contract.uri(tokenId);
-      return _tokenURI.replace('{id}', paddingId(tokenId));
+    try {
+        let _tokenURI;
+        if (!is1155) {
+        const _contract = this.conflux.Contract({
+            address,
+            abi: NFT721_ABI
+        });
+        _tokenURI = await _contract.tokenURI(tokenId);
+        } else {
+        const _contract = this.conflux.Contract({
+            address,
+            abi: ERC1155_ABI
+        });
+        _tokenURI = await _contract.uri(tokenId);
+        }
+        return _tokenURI.replace('{id}', paddingId(tokenId));
+    } catch(e) {
+        if (e.message.match('length not match')) {
+            const code = await this.conflux.getCode(address);
+            if (code === '0x') {
+                throw new Error('Contract not exist, maybe not deployed yet or destroyed');
+            }
+        }
+        throw e;
     }
   }
 
